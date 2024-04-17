@@ -106,6 +106,7 @@ class _TicTacToeState extends State<NeuralNetwork> {
   }
 
   void makeMove(int index) {
+    //wait a little before next game begins
     if (waiting == false) {
       setState(() {
         Matrix? prediction = network.forwardPass(boardState, functions);
@@ -118,10 +119,12 @@ class _TicTacToeState extends State<NeuralNetwork> {
             board[index] = 'O';
           }
           xTurn = !xTurn;
-          checkWin();
-          boardState = encodeBoard();
-          boardState.display();
-          makeAIMove(prediction!);
+          bool won = checkWin();
+          if(!won){
+            boardState = encodeBoard();
+            boardState.display();
+            makeAIMove(prediction!);
+          }
         }
       });
     }
@@ -130,14 +133,13 @@ class _TicTacToeState extends State<NeuralNetwork> {
   void makeAIMove(Matrix prediction){
     print("AI making move");
     network.backwardsPass(prediction, boardState);
-    int index = network.getAnswer(boardState, functions, -1);
+    int index = getAnswer(boardState, functions, -1);
     while(board[index] != ''){
       index= (index+1)%9;
     }
     print("Index: ${index}");
     setState(() {
       if (board[index] == '') {
-
         if (xTurn) {
           board[index] = 'X';
         } else {
@@ -150,38 +152,48 @@ class _TicTacToeState extends State<NeuralNetwork> {
     boardState = encodeBoard();
   }
 
-  void checkWin() {
+  bool checkWin() {
       //horizontal check
       if (board[0] == board[1] && board[0] == board[2] && board[0] != '') {
         showWinDialogue(board[0]);
+        return true;
       } else if (board[3] == board[4] &&
           board[3] == board[5] &&
           board[3] != '') {
         showWinDialogue(board[3]);
+        return true;
       }
       else if (board[6] == board[7] && board[6] == board[8] && board[6] != '') {
         showWinDialogue(board[6]);
+        return true;
       }
       //vertical check
       else if (board[0] == board[3] && board[0] == board[6] && board[0] != '') {
         showWinDialogue(board[0]);
+        return true;
       }
       else if (board[1] == board[4] && board[1] == board[7] && board[1] != '') {
         showWinDialogue(board[1]);
+        return true;
       }
       else if (board[2] == board[5] && board[2] == board[8] && board[2] != '') {
         showWinDialogue(board[2]);
+        return true;
       }
       //diagonal check
       else if (board[0] == board[4] && board[0] == board[8] && board[0] != '') {
         showWinDialogue(board[0]);
+        return true;
       }
       else if (board[2] == board[4] && board[4] == board[6] && board[2] != '') {
         showWinDialogue(board[2]);
+        return true;
       }
       else if(!board.contains('')){
         showWinDialogue(null);
+        return true;
       }
+      return false;
   }
 
   void showWinDialogue(String? winner) {
@@ -221,5 +233,23 @@ class _TicTacToeState extends State<NeuralNetwork> {
       });
       waiting = false;
     });
+  }
+
+  int getAnswer(Matrix input, List<double Function(double)> functions, int player){
+    Matrix? matrix = network.forwardPass(input, functions);
+
+    List<dynamic>? output = matrix?.getRow(0);
+
+    int index = 0;
+    double closest = double.infinity;
+
+    for (int i = 0; i < output!.length; i++) {
+      double difference = (output[i] - player).abs();
+      if (difference < closest) {
+        index = i;
+        closest = difference;
+      }
+    }
+    return index;
   }
 }

@@ -31,7 +31,7 @@ class Network{
   }
 
   double update(double MSE, double x){
-    return MSE * x;
+    return x - (0.01*(MSE/x));
   }
 
   double tanH(double x){
@@ -87,13 +87,13 @@ class Network{
     //print(MSE);
 
     for(int i = 0; i < biases.length; i++){
-      biases[i] = biases[i]?.performFunction((double x) => x*MSE);
-      weights[i] = weights[i].performFunction((double x) => x*MSE);
+      biases[i] = biases[i]?.performFunction((double x) => update(MSE, x));
+      weights[i] = weights[i].performFunction((double x) => update(MSE, x));
     }
     weights[0].display();
 
   }
-
+  
   int getAnswer(Matrix input, List<double Function(double)> functions, int player){
     Matrix? matrix = forwardPass(input, functions);
 
