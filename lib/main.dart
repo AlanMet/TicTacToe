@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe2/pages/TwoPlayerPage.dart';
 import 'package:tictactoe2/pages/HomePage.dart';
 
 void main() {

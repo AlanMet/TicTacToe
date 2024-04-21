@@ -57,12 +57,12 @@ class Matrix {
           newMatrix.setAt(row: i, col: j, value: sum);
         }
       }
-      //print("Matrix operation performed.");
-      //print("${_row}x${_col} ⋅ ${matrixB.row}x${matrixB.col} = ${newMatrix.row}x${newMatrix.col}\n");
+      print("Matrix operation performed.");
+      print("${_row}x${_col} ⋅ ${matrixB.row}x${matrixB.col} = ${newMatrix.row}x${newMatrix.col}\n");
       return newMatrix;
     }
-    //print("Cannot perform matrix operation");
-    //print("${_row}x${_col} ⋅ ${matrixB.row}x${matrixB.col}\n");
+    print("Cannot perform matrix operation");
+    print("${_row}x${_col} ⋅ ${matrixB.row}x${matrixB.col}\n");
     return null;
   }
 
@@ -90,6 +90,55 @@ class Matrix {
     return null;
   }
 
+  Matrix? multiply(Matrix matrixB) {
+    if (_col == matrixB.col && _row == matrixB.row) {
+      Matrix newMatrix = Matrix(row: _row, col: matrixB.col);
+      newMatrix.empty();
+      for (int i = 0; i < _row; i++) {
+        for (int j = 0; j < matrixB.col; j++) {
+          newMatrix.setAt(
+              row: i,
+              col: j,
+              value: getAt(row: i, col: j) * matrixB.getAt(row: i, col: j));
+        }
+      }
+      //print("Addition performed successfully.\n");
+      return newMatrix;
+    }
+    //print("Cannot perform matrix operation");
+    //print("${_row}x$_col ⋅ ${matrixB.row}x${matrixB.col}\n");
+    return null;
+  }
+
+  Matrix? multiplyByNumber(double x) {
+      Matrix newMatrix = Matrix(row: _row, col: _col);
+      newMatrix.empty();
+      for (int i = 0; i < _row; i++) {
+        for (int j = 0; j < _col; j++) {
+          newMatrix.setAt(
+              row: i,
+              col: j,
+              value: getAt(row: i, col: j) * x);
+        }
+      }
+      //print("Addition performed successfully.\n");
+      return newMatrix;
+    //print("Cannot perform matrix operation");
+    //print("${_row}x$_col ⋅ ${matrixB.row}x${matrixB.col}\n");
+    return null;
+  }
+
+  Matrix? transpose(){
+    Matrix newMatrix = Matrix(row: _col, col: _row);
+    newMatrix.empty();
+    for (int i = 0; i < _row; i++) {
+      for (int j = 0; j < getRow(i)!.length; j++) {
+        newMatrix.setAt(row: j, col: i, value: getRow(i)![j]);
+      }
+    }
+    return newMatrix;
+  }
+
   List? getRow(int row) {
     return _matrix[row];
   }
@@ -103,7 +152,8 @@ class Matrix {
     newMatrix.empty();
     for (int i = 0; i < _row; i++) {
       for (int j = 0; j < _col; j++) {
-        newMatrix.setAt(row: i, col: j, value: function(getAt(row: i, col: j)));
+        double result = function(getAt(row: i, col: j));
+        newMatrix.setAt(row: i, col: j, value: result);
       }
     }
     return newMatrix;
@@ -122,15 +172,11 @@ class Matrix {
 }
 
 void main() {
-  Matrix matrix = new Matrix(row: 2, col: 2);
+  Matrix matrix = new Matrix(row: 3, col: 3);
   matrix.generate(-1, 1);
   matrix.display();
-  print("");
-
-  Matrix weights = new Matrix(row: 2, col: 2);
-  weights.generate(-1, 1);
-  weights.display();
-  print("");
-
-  matrix.add(weights)?.display();
+  print(matrix.getAt(row: 0, col: 1));
+  matrix = matrix.transpose()!;
+  matrix.display();
+  //print("");
 }

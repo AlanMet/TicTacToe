@@ -132,7 +132,7 @@ class _TicTacToeState extends State<NeuralNetwork> {
 
   void makeAIMove(Matrix prediction){
     print("AI making move");
-    network.backwardsPass(prediction, boardState);
+    network.backwardsPass(prediction, boardState, functions, 0.01);
     int index = getAnswer(boardState, functions, -1);
     while(board[index] != ''){
       index= (index+1)%9;
