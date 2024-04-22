@@ -16,7 +16,7 @@ class Network{
     for(int x = 0; x < layers.length-1; x++){
       Matrix matrix = Matrix(row: layers[x], col: layers[x+1]);
       matrix.generate(-1, 1);
-      matrix.display();
+      //matrix.display();
       //print("");
       weights.add(matrix);
 
@@ -44,8 +44,22 @@ class Network{
     return 1-pow(tanH(x), 2).toDouble();
   }
 
-  double update(double x, double lr, double dCdW){
-    return x - lr*(dCdW);
+  double sigmoid(double x){
+    return 1/1+exp(-x);
+  }
+
+  double sigmoidDerivative(double x){
+    return sigmoid(x) * (1-sigmoid(x));
+  }
+
+  void update(Matrix dCdW, int layer){
+    for(int i = 0; i < weights[layer].row; i++){
+      for(int j = 0; j < weights[layer].col; j++){
+        double current = weights[layer].getAt(row: i, col: j);
+        current = current - dCdW.getAt(row: 0, col: i);
+        weights[layer].setAt(row: i, col: j, value: current);
+      }
+    }
   }
 
   void display(){
@@ -57,12 +71,12 @@ class Network{
   }
 
   Matrix? forwardPass(Matrix input, List<double Function(double)> functions){
-    print("Running");
+    preActivated.add(input);
+    print("Running Forwardpass");
     Matrix? matrix;
 
     for(int i=0; i<weights.length; i++){
       if(i==0){
-        preActivated.add(null);
         matrix = input.dot(weights[i]);
       }
       else{
@@ -116,6 +130,9 @@ class Network{
     if(function == mse){
       return reLUDerivative;
     }
+    if(function == sigmoid){
+      return sigmoidDerivative;
+    }
     else{
       return null;
     }
@@ -123,6 +140,8 @@ class Network{
 
   void backwardsPass(Matrix expected, Matrix predicted, List<double Function(double)> functions, double lr){
     print("Running backprop.");
+    expected.display();
+    predicted.display();
 
     for(int i = weights.length-1; i>=0; i--){
       print("Updating Layer:${i}");
@@ -135,60 +154,17 @@ class Network{
         for(int x = weights.length-1; x >= i; x--){
           output = output.performFunction(getDerivative(functions[x])!);
           output = output.subtract(biases[x]!)!;
-          output.display();
-          weights[x].display();
           output = output.dot(weights[x].transpose()!)!;
         }
         dCdY = mseDerivative(preActivated[i]!.performFunction(functions[i]), output);
       }
-      print("Hello");
       Matrix dYdZ = preActivated[i]!;
-      print("Hello");
       dYdZ = dYdZ.performFunction(functions[i]);
-      print("Hello");
-      print(preActivated[i]);
       Matrix a=preActivated[i]!;
-      print("Hello");
       Matrix dCdW = dYdZ.multiplyByNumber(dCdY)!.multiply(a)!.multiplyByNumber(0.01)!;
-      //num sum = result.reduce((value, element) => value + element);
-      print("Hello");
-      dCdW.display();
+      update(dCdW, i);
     }
-
-
-    /*double dCdY = 0;
-
-    for(int i = weights.length-1; i > 0; i--){
-      Matrix? newExpected = expected;
-      Matrix? preActiveCopy = preActivated[preActivated.length-1];
-
-      if(i == weights.length-1){
-        //use output layer for dMSE
-        dCdY = mseDerivative(predicted, expected);
-      }
-      else{
-        //use expected data backwards to get expected for current layer
-        for(int x = i; x > 0; x--){
-          newExpected.subtract(biases[biases.length-x]!);
-          newExpected.dot(weights[weights.length-x]);
-        }
-
-        //use current layer for dMSE
-        dCdY = mseDerivative(preActiveCopy!, newExpected);
-      }
-
-      //perform the derivative of the current layer's function.
-      Function currentFunction = getDerivative(functions[functions.length-i])!;
-      Matrix? dYdZ = preActivated[preActivated.length-1]!.performFunction((double x) => currentFunction(x));
-
-      dYdZ.multiply(preActiveCopy!);
-      dYdZ.multiply(preActivated[preActivated.length-i]!);
-      dYdZ.performFunction((double x) => x*lr);
-
-      weights[weights.length-i].subtract(dYdZ);
-
-      dYdZ.display();
-    }*/
+    print("Done.");
   }
   
   int getAnswer(Matrix input, List<double Function(double)> functions, int player){
@@ -211,23 +187,24 @@ class Network{
 }
 
 void main(){
-  Network network = new Network(layers: [9, 6, 6, 9]);
+  Network network = new Network(layers: [1, 1, 1, 1]);
+  List<double Function(double)> functions = [network.reLU, network.reLU, network.sigmoid];
 
-  Matrix input = new Matrix(row: 1, col: 9);
+  Matrix input = new Matrix(row: 1, col: 1);
   input.empty();
-  input.setAt(row: 0, col: 0, value: 1);
 
-  List<double Function(double)> functions = [network.reLU, network.reLU, network.tanH];
-  Matrix? forward = network.forwardPass(input, functions);
-  print("Forward complete");
+  Matrix expected = new Matrix(row: 1, col: 1);
+  expected.empty();
+  expected.setAt(row: 0, col: 0, value: 1);
+  //expected = [1.0]
 
-  Matrix predicted = new Matrix(row: 1, col: 9);
-  predicted.empty();
-  predicted.setAt(row: 0, col: 1, value: -1);
+  Matrix? predicted = network.forwardPass(input, functions);
+  predicted!.display();
 
-  network.backwardsPass(forward!, predicted, functions, 0.01);
+  network.backwardsPass(expected, predicted, functions, 0.01);
+  network.backwardsPass(expected, predicted, functions, 0.01);
+  network.backwardsPass(expected, predicted, functions, 0.01);
 
-  forward = network.forwardPass(input, functions);
-  //forward?.display();
-
+  predicted = network.forwardPass(input, functions);
+  predicted?.display();
 }

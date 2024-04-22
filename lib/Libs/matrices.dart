@@ -57,8 +57,8 @@ class Matrix {
           newMatrix.setAt(row: i, col: j, value: sum);
         }
       }
-      print("Matrix operation performed.");
-      print("${_row}x${_col} ⋅ ${matrixB.row}x${matrixB.col} = ${newMatrix.row}x${newMatrix.col}\n");
+      //print("Matrix operation performed.");
+      //print("${_row}x${_col} ⋅ ${matrixB.row}x${matrixB.col} = ${newMatrix.row}x${newMatrix.col}\n");
       return newMatrix;
     }
     print("Cannot perform matrix operation");
@@ -145,6 +145,19 @@ class Matrix {
 
   Matrix? subtract(Matrix matrixB) {
     return add(flipMatrix(matrixB)!);
+  }
+
+  Matrix? subtractByNumber(double x){
+    Matrix newMatrix = Matrix(row: _row, col: _col);
+    newMatrix.empty();
+    for (int i = 0; i < _row; i++) {
+      for (int j = 0; j < _col; j++) {
+        newMatrix.setAt(
+            row: i,
+            col: j,
+            value: getAt(row: i, col: j) - x);
+      }
+    }
   }
 
   Matrix performFunction(Function(double) function) {
