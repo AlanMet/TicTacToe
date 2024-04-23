@@ -20,7 +20,7 @@ To reproduce issues with the neural network.
 1. Run the program on web
 2. select VS AI
 3. The output begins in initialisation where the weights are displayed
-4. *The output is also displayed on the web console when pressing f12*
+4. **The output is also displayed on the web console when pressing f12**
 5. Once a move is made the program runs forward propagation using the state of the board as an input to make a prediction.
 6. Then the player move is used to perform backpropagation and update the weights and biases.
 7. the neural network then makes a new move by running forward propagation.
