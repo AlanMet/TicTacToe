@@ -25,7 +25,7 @@ To reproduce issues with the neural network.
 6. Then the player move is used to perform backpropagation and update the weights and biases.
 7. the neural network then makes a new move by running forward propagation.
 8. it displays its output to the console.
-9. If you want more details on the weights, running weights[i].display(); in backwardsPass will display it on the screen.
+9. If you want more details on the weights, adding weights[i].display(); in the backwardsPass loop will display it on the screen.
 
 Previously when I ran the program, all of the weights would converge to the same number. 
 I updated the backpropagation to function correctly. 
