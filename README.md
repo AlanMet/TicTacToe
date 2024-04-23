@@ -17,15 +17,14 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Issue
 To reproduce issues with the neural network.
-1. Run the program
+1. Run the program on web
 2. select VS AI
-3. play the game
-4. The output begins in initialisation where the weights are displayed
-5. Once a move is made the program runs forward propagation using the state of the board as an input to make a prediction.
-6. Then the player move is used to perform backpropagation and update the weights and biases.
-7. the neural network then makes a new move by running forward propagation.
-8. it displays its output to the console.
-9. If you want more details on the weights, adding weights[i].display(); in the backwardsPass loop will display it on the screen.
+3. The output begins in initialisation where the weights are displayed
+4. Once a move is made the program runs forward propagation using the state of the board as an input to make a prediction.
+5. Then the player move is used to perform backpropagation and update the weights and biases.
+6. the neural network then makes a new move by running forward propagation.
+7. it displays its output to the console.
+8. If you want more details on the weights, adding weights[i].display(); in the backwardsPass loop will display it on the screen.
 
 Previously when I ran the program, all of the weights would converge to the same number. 
 I updated the backpropagation to function correctly. 
